@@ -31,7 +31,19 @@ def get_listings_from_search_results(html_file):
     search_results = []
     tags = soup.find_all('div', class_='t1jojoys')
     
-        
+    for tag in tags:
+        title = soup.find('div', class_='t1jojoys dir dir-ltr')
+        '''title = title.lstrip('<div class="t1jojoys dir dir-ltr" id="title_1944564">')'''
+        cost = soup.find('span', class_='_tyxjp1')
+        listing_id = soup.find('id')
+    
+    f.close()
+
+    search_results.append((title, cost, listing_id))
+    
+    print (search_results)
+
+    
 
     
 
