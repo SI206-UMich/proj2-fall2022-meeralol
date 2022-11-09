@@ -25,8 +25,14 @@ def get_listings_from_search_results(html_file):
         ('Loft in Mission District', 210, '1944564'),  # example
     ]
     """
-    r = requests.get(html_file)
-    soup = BeautifulSoup(r.content, 'html.parser')
+    
+    f = open(html_file, 'r')
+    soup = BeautifulSoup(f, 'html.parser')
+    search_results = []
+    tags = soup.find_all('div', class_='t1jojoys')
+    
+        
+
     
 
 
