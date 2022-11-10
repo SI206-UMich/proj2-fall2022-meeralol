@@ -30,21 +30,31 @@ def get_listings_from_search_results(html_file):
     soup = BeautifulSoup(f, 'html.parser')
     search_results = []
     tags = soup.find_all('div', class_='t1jojoys')
-    
-    for tag in tags:
-        title = soup.find('div', class_='t1jojoys dir dir-ltr')
-        '''title = title.lstrip('<div class="t1jojoys dir dir-ltr" id="title_1944564">')'''
-        cost = soup.find('span', class_='_tyxjp1')
-        listing_id = soup.find('id')
-    
     f.close()
 
-    search_results.append((title, cost, listing_id))
-    
-    print (search_results)
+    title = soup.find_all('div', class_='t1jojoys dir dir-ltr')
+    title_list = []
+    listing_id = []
+    for t in title:
+        title_list.append(t.text)
+        id_name = t.get('id')
+        listing_id.append(id_name[6:])
 
-    
+    #print(title_list,listing_id)
 
+    cost = soup.find_all('span', class_='_tyxjp1')
+    cost_list = []
+    for c in cost:
+        c = int(c.text.strip('$'))
+        cost_list.append(c)
+       
+    #print(cost_list)
+    
+    search_results = list(zip(title_list, cost_list, listing_id))
+    #print(search_results)
+
+    return search_results
+    
     
 
 
@@ -72,7 +82,7 @@ def get_listing_information(listing_id):
         number of bedrooms
     )
     """
-    pass
+    
 
 
 def get_detailed_listing_database(html_file):
