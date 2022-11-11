@@ -83,7 +83,44 @@ def get_listing_information(listing_id):
     )
     """
     
+    f = open('html_files/listing_'+(listing_id)+'.html', 'r')
+    soup = BeautifulSoup(f, 'html.parser')
+    f.close()
 
+    policy_number = soup.find_all('li', class_='f19phm7j dir dir-ltr')
+    policy_num = policy_number[0].text
+    policy_name = policy_num.split(': ')[1]
+    if policy_name == "Pending Application" or policy_name == "City registration Pending" or policy_name == "pending" or policy_name == "City Registration Pedning":
+        policy_name = "Pending"
+    if policy_name == "License not needed per OSTR" or policy_name == "exempt":
+        policy_name = "Exempt"
+
+
+
+    place_type = soup.find_all('h2', class_= '_14i3z6h')
+    place_name = place_type[0].text.split(' ')
+    place = place_name[0]
+    if place == "Private" or place == "private":
+        place = "Private Room"
+    elif place == "Shared" or place == "shared":
+        place = "Shared Room"
+    else:
+        place = "Entire Room"
+
+
+    room_number = soup.find_all('li', class_= 'l7n4lsf dir dir-ltr')[1]
+    room_num = room_number.find_all('span')[2].text.split(' ')
+    room = room_num[0]
+    if room == "Studio" or room == "studio":
+        room = '1'
+    room = int(room)
+
+    listing_tuple = (policy_name, place, room)
+   
+    return listing_tuple
+
+       
+    
 
 def get_detailed_listing_database(html_file):
     """
