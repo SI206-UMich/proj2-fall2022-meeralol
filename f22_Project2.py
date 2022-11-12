@@ -90,7 +90,7 @@ def get_listing_information(listing_id):
     policy_number = soup.find_all('li', class_='f19phm7j dir dir-ltr')
     policy_num = policy_number[0].text
     policy_name = policy_num.split(': ')[1]
-    if policy_name == "Pending Application" or policy_name == "City registration Pending" or policy_name == "pending" or policy_name == "City Registration Pedning":
+    if policy_name == "Pending Application" or policy_name == "City registration Pending" or policy_name == "pending" or policy_name == "City Registration Pending" or policy_name == "City registration pending" :
         policy_name = "Pending"
     if policy_name == "License not needed per OSTR" or policy_name == "exempt":
         policy_name = "Exempt"
@@ -116,7 +116,7 @@ def get_listing_information(listing_id):
     room = int(room)
 
     listing_tuple = (policy_name, place, room)
-   
+    #print(listing_tuple)
     return listing_tuple
 
        
@@ -136,7 +136,37 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    pass
+    detailed_listings = []
+    search_listings = []
+    listing_information = []
+    titles_list = []
+    cost_list = []
+    id_list = []
+    policy_list = []
+    place_list = []
+    beds_list = []
+
+    search_listings = get_listings_from_search_results(html_file)
+    for item in search_listings:
+        titles_list.append(item[0])
+        cost_list.append(item[1])
+        id_list.append(item[2])
+
+    for listing in search_listings:
+        listing_id = listing[2]
+        listing_information = get_listing_information(listing_id)
+        policy_list.append(listing_information[0])
+        place_list.append(listing_information[1])
+        beds_list.append(listing_information[2])
+
+    
+        
+    detailed_listings =  list(zip(titles_list, cost_list, id_list, policy_list, place_list, beds_list))
+    #print (detailed_listings)
+    
+    return detailed_listings
+
+
 
 
 def write_csv(data, filename):
@@ -183,7 +213,40 @@ def check_policy_numbers(data):
     ]
 
     """
-    pass
+    policy_list = []
+    reg1_list = []
+    reg2_list = []
+    correct_policies = []
+    policy_list_final = []
+    id_list = []
+
+    for listing in data:
+        policy_number = listing[3]
+        if policy_number != "Pending" and policy_number != "Exempt":
+            policy_list.append(policy_number)
+
+    
+    for policy in policy_list:
+        if policy != "Pending" and policy != "Exempt":
+            if re.findall('20\d{2}-00\d{4}STR', policy):
+                reg1_list.append(policy)
+            if re.findall('STR-000\d{4}', policy):
+                reg2_list.append(policy)
+    
+        correct_policies = reg1_list + reg2_list
+    
+        policy_list_final = [x for x in policy_list if x not in correct_policies]
+    
+    for listing in data:
+        for policy in policy_list_final:
+            if listing[3] == policy:
+                incorrect_id = listing[2]
+                id_list.append(incorrect_id)
+                
+
+
+    #print (id_list)
+    return id_list
 
 
 def extra_credit(listing_id):
